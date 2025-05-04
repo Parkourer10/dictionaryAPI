@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dictionary API</title>
+  <link rel="icon" href="cool.jpg" type="image/jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 90%;
+      padding: 50px 30px;
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.3em;
+      background: linear-gradient(90deg, #1e88e5, #5e35b1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #a0a0a0;
+      margin-bottom: 2.5em;
+    }
+
+    .subtitle a {
+      color: #64b5f6;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s ease;
+    }
+
+    .subtitle a:hover {
+      color: #90caf9;
+      text-decoration: underline;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2em;
+    }
+
+    input[type="text"] {
+      padding: 12px 16px;
+      font-size: 1rem;
+      width: 70%;
+      max-width: 350px;
+      border-radius: 8px 0 0 8px;
+      border: 1px solid #333;
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1e88e5;
+      box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.3);
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 0 8px 8px 0;
+      border: none;
+      background-color: #1e88e5;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    .code-toggle {
+      margin: 1.5em 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .code-toggle button {
+      border-radius: 6px;
+      padding: 8px 16px;
+      background-color: #2d2d2d;
+      transition: all 0.2s ease;
+    }
+
+    .code-toggle button:hover {
+      background-color: #3d3d3d;
+    }
+
+    .code-toggle button.active {
+      background-color: #1e88e5;
+    }
+
+    .code-container {
+      background: #1f1f1f;
+      padding: 1.5em;
+      border-radius: 10px;
+      margin-top: 1.5em;
+      text-align: left;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    pre {
+      padding: 0;
+      margin: 0;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .api-info {
+      margin-top: 3em;
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .api-info p {
+      margin-bottom: 1em;
+    }
+
+    .api-info h3 {
+      margin: 1em 0;
+      color: #90caf9;
+    }
+
+    svg {
+      vertical-align: middle;
+      fill: #64b5f6;
+      transition: fill 0.2s ease;
+    }
+
+    .subtitle a:hover svg {
+      fill: #90caf9;
+    }
+
+    code {
+      background-color: #2d2d2d;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+    }
+
+    #footer-note {
+      margin-top: 2em;
+      color: #bbb;
+      font-style: italic;
+    }
+
+    /* Comment syntax highlighting */
+    .comment { color: #6A9955; }
+    .string { color: #CE9178; }
+    .keyword { color: #569CD6; }
+    .function { color: #DCDCAA; }
+    .method { color: #4EC9B0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dictionary API</h1>
+    <div class="subtitle">
+      Made by 
+      <a href="https://github.com/parkourer10" target="_blank">
+        <svg height="18" viewBox="0 0 16 16" width="18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 
+            5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 
+            1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 
+            0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 
+            7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 
+            2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 
+            2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 
+            1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 
+            8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+        </svg> Parkourer10
+      </a>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="search-bar" placeholder="Search a word..." />
+      <button onclick="searchWord()">Search</button>
+    </div>
+
+    <div class="api-info">
+      <p><strong>Endpoint:</strong> <code>/dictionary/{word}</code></p>
+      <p>This endpoint returns a JSON response with definitions and examples for the word you provide.</p>
+      <h3>Code Example</h3>
+      <div class="code-toggle">
+        <button onclick="showCode('python')" id="python-btn" class="active">Python</button>
+        <button onclick="showCode('js')" id="js-btn">JavaScript</button>
+      </div>
+      <div class="code-container">
+        <pre id="code-block"><span class="keyword">import</span> requests
+
+<span class="comment"># Make a request to the Dictionary API</span>
+response = requests.get(<span class="string">"https://dictionary.fonders.org/dictionary/hello"</span>)
+
+<span class="comment"># Check if the request was successful</span>
+<span class="keyword">if</span> response.status_code == <span class="number">200</span>:
+    <span class="comment"># Parse the JSON response</span>
+    data = response.json()
+    
+    <span class="comment"># Print the result</span>
+    <span class="keyword">print</span>(data)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">f"Error: {response.status_code}"</span>)</pre>
+      </div>
+      <p id="footer-note">
+        I got bored, so I made this dictionary API.<br>
+        Use it in all your apps with no strings attached. No keys, no nonsense.
+        Right now, it only supports English words, but I plan to add more languages in the future.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function searchWord() {
+      const word = document.getElementById("search-bar").value.trim();
+      if (!word) {
+        alert("Please enter a word to search.");
+        return;
+      }
+      window.location.href = `/dictionary/${word}`;
+    }
+  
+    function showCode(lang) {
+      const codeBlock = document.getElementById("code-block");
+      const pythonBtn = document.getElementById("python-btn");
+      const jsBtn = document.getElementById("js-btn");
+      
+      // Update active button
+      if (lang === "python") {
+        pythonBtn.classList.add("active");
+        jsBtn.classList.remove("active");
+        codeBlock.innerHTML = `<span class="keyword">import</span> requests
+
+<span class="comment"># Make a request to the Dictionary API</span>
+response = requests.get(<span class="string">"https://dictionary.fonders.org/dictionary/hello"</span>)
+
+<span class="comment"># Check if the request was successful</span>
+<span class="keyword">if</span> response.status_code == <span class="number">200</span>:
+    <span class="comment"># Parse the JSON response</span>
+    data = response.json()
+    
+    <span class="comment"># Print the result</span>
+    <span class="keyword">print</span>(data)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">f"Error: {response.status_code}"</span>)`;
+      } else {
+        jsBtn.classList.add("active");
+        pythonBtn.classList.remove("active");
+        codeBlock.innerHTML = `<span class="comment">// Make a request to the Dictionary API</span>
+fetch(<span class="string">"https://dictionary.fonders.org/dictionary/hello"</span>)
+  .then(<span class="function">response</span> => {
+    <span class="keyword">if</span> (!response.ok) {
+      <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">\`Error: \${response.status}\`</span>);
+    }
+    <span class="keyword">return</span> response.json();
+  })
+  .then(<span class="function">data</span> => {
+    console.<span class="method">log</span>(data);
+  })
+  .catch(<span class="function">error</span> => {
+    console.<span class="method">error</span>(error);
+  });`;
+      }
+    }
+  
+    // Listen for Enter key
+    document.getElementById("search-bar").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        searchWord();
+      }
+    });
+    document.getElementById("python-btn").classList.add("active");
+  </script>
+</body>
+</html>
