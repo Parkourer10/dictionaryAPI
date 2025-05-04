@@ -12,7 +12,7 @@ def dictionary(word: str):
     """, (word,)).fetchall()
 
     if not results:
-        return json.dumps({"error": "Word not found!"}, indent=2)
+        return json.dumps({"Word not found!"}, indent=2)
     
     pos_entries = {}
     all_examples = []

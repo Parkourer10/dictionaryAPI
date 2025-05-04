@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dictionary API</title>
-  <link rel="icon" href="cool.jpg" type="image/jpeg">
+  <link rel="icon" href="favicon.ico">
   <style>
     * {
       box-sizing: border-box;
@@ -187,6 +187,171 @@
     .keyword { color: #569CD6; }
     .function { color: #DCDCAA; }
     .method { color: #4EC9B0; }
+
+    /* Results styling */
+    #results-container {
+      display: none;
+      margin-top: 2em;
+      text-align: left;
+      background: rgba(37, 37, 37, 0.7);
+      border-radius: 12px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #word-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5em;
+      border-bottom: 1px solid #333;
+      padding-bottom: 12px;
+    }
+
+    #word-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+      text-transform: capitalize;
+    }
+
+    #word-language {
+      font-size: 1rem;
+      color: #64b5f6;
+      background: rgba(30, 136, 229, 0.1);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .part-of-speech {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #a0a0a0;
+      margin: 1.5em 0 0.8em 0;
+      border-left: 3px solid #1e88e5;
+      padding-left: 12px;
+    }
+
+    .definitions-list {
+      list-style-position: inside;
+      padding-left: 10px;
+    }
+
+    .definition-item {
+      margin-bottom: 0.8em;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .definition-item::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #64b5f6;
+    }
+
+    .examples-section {
+      margin-top: 2em;
+      padding-top: 1.5em;
+      border-top: 1px solid #333;
+    }
+
+    .examples-header {
+      font-size: 1.2rem;
+      color: #90caf9;
+      margin-bottom: 1em;
+    }
+
+    .example-item {
+      background: rgba(30, 136, 229, 0.05);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 2px solid #1e88e5;
+    }
+
+    .example-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .loading {
+      display: none;
+      justify-content: center;
+      margin: 2em auto;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(30, 136, 229, 0.2);
+      border-left-color: #1e88e5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 2em 0;
+      border-left: 3px solid #ff6b6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .error-message svg {
+      margin-right: 8px;
+      fill: #ff6b6b;
+    }
+
+    .toggle-view {
+      margin-top: 1em;
+      text-align: right;
+    }
+
+    .toggle-view button {
+      background: transparent;
+      border: 1px solid #444;
+      color: #a0a0a0;
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-view button:hover {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+
+    #raw-json {
+      display: none;
+      margin-top: 1em;
+      padding: 1em;
+      background: #1f1f1f;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -214,8 +379,28 @@
       <button onclick="searchWord()">Search</button>
     </div>
 
+    <div class="loading" id="loading">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <div id="results-container">
+      <div id="word-header">
+        <h2 id="word-title"></h2>
+        <span id="word-language"></span>
+      </div>
+      <div id="entries-container"></div>
+      <div class="examples-section" id="examples-section">
+        <h3 class="examples-header">Examples</h3>
+        <div id="examples-container"></div>
+      </div>
+      <div class="toggle-view">
+        <button onclick="toggleJsonView()">Toggle JSON View</button>
+      </div>
+      <pre id="raw-json"></pre>
+    </div>
+
     <div class="api-info">
-      <p><strong>Endpoint:</strong> <code>/dictionary/{word}</code></p>
+      <p><strong>Endpoint:</strong> <code>https://dictionary.fonders.org/dictionary/{word}</code></p>
       <p>This endpoint returns a JSON response with definitions and examples for the word you provide.</p>
       <h3>Code Example</h3>
       <div class="code-toggle">
@@ -253,7 +438,122 @@ response = requests.get(<span class="string">"https://dictionary.fonders.org/dic
         alert("Please enter a word to search.");
         return;
       }
-      window.location.href = `/dictionary/${word}`;
+      
+      // Show loading spinner
+      document.getElementById("loading").style.display = "flex";
+      document.getElementById("results-container").style.display = "none";
+      
+      // Make API request
+      fetch(`https://dictionary.fonders.org/dictionary/${word}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          displayResults(data);
+        })
+        .catch(error => {
+          document.getElementById("loading").style.display = "none";
+          showError(error.message);
+        });
+    }
+    
+    function displayResults(data) {
+      // Hide loading spinner
+      document.getElementById("loading").style.display = "none";
+      
+      // Display container
+      const resultsContainer = document.getElementById("results-container");
+      resultsContainer.style.display = "block";
+      
+      // Set word and language
+      document.getElementById("word-title").textContent = data.word;
+      document.getElementById("word-language").textContent = data.language;
+      
+      // Clear previous entries
+      const entriesContainer = document.getElementById("entries-container");
+      entriesContainer.innerHTML = "";
+      
+      // Display entries by part of speech
+      data.entries.forEach(entry => {
+        const partOfSpeechElem = document.createElement("h3");
+        partOfSpeechElem.className = "part-of-speech";
+        partOfSpeechElem.textContent = formatPartOfSpeech(entry.part_of_speech);
+        entriesContainer.appendChild(partOfSpeechElem);
+        
+        const definitionsList = document.createElement("ul");
+        definitionsList.className = "definitions-list";
+        
+        entry.definitions.forEach(def => {
+          const defItem = document.createElement("li");
+          defItem.className = "definition-item";
+          defItem.textContent = def.text;
+          definitionsList.appendChild(defItem);
+        });
+        
+        entriesContainer.appendChild(definitionsList);
+      });
+      
+      // Display examples
+      const examplesSection = document.getElementById("examples-section");
+      const examplesContainer = document.getElementById("examples-container");
+      examplesContainer.innerHTML = "";
+      
+      if (data.examples && data.examples.length > 0) {
+        examplesSection.style.display = "block";
+        
+        data.examples.forEach(example => {
+          const exampleItem = document.createElement("div");
+          exampleItem.className = "example-item";
+          exampleItem.textContent = `"${example}"`;
+          examplesContainer.appendChild(exampleItem);
+        });
+      } else {
+        examplesSection.style.display = "none";
+      }
+      
+      // Store raw JSON
+      document.getElementById("raw-json").textContent = JSON.stringify(data, null, 2);
+    }
+    
+    function formatPartOfSpeech(pos) {
+      const formats = {
+        "noun": "Noun",
+        "verb": "Verb",
+        "adj": "Adjective",
+        "adv": "Adverb",
+        "pron": "Pronoun",
+        "prep": "Preposition",
+        "conj": "Conjunction",
+        "interj": "Interjection",
+        "det": "Determiner"
+      };
+      
+      return formats[pos] || pos;
+    }
+    
+    function showError(message) {
+      const resultsContainer = document.getElementById("results-container");
+      resultsContainer.style.display = "block";
+      resultsContainer.innerHTML = `
+        <div class="error-message">
+          <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z"/>
+          </svg>
+          Word not found or error fetching results. Please try another word.
+        </div>
+      `;
+    }
+    
+    function toggleJsonView() {
+      const rawJson = document.getElementById("raw-json");
+      if (rawJson.style.display === "block") {
+        rawJson.style.display = "none";
+      } else {
+        rawJson.style.display = "block";
+      }
     }
   
     function showCode(lang) {
