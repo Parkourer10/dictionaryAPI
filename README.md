@@ -1,5 +1,5 @@
 # Dictionary API
-a simple FastAPI dictionary API that serves definitions, parts of speech, and example usages of english words by querying a local duckdb database.
+a simple FastAPI dictionary API that serves definitions, parts of speech, and example usages of english words by querying a local duckdb database. Access the api [here](https://dictionary.fonders.org/)
 
 ## Structure of an example word defination:
 ```json
