@@ -23,3 +23,6 @@ a simple FastAPI dictionary API that serves definitions, parts of speech, and ex
 
 
 ```
+
+## LICENSE
+Licensed undet the [MIT LICENSE](LICENSE)
